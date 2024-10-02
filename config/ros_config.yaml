@@ -1,14 +1,27 @@
-Node:
-    Name: "enhancer_scheduler"
-    Topics:
-        camera_out: "/camera/fisheye1/image_raw"
-        enhancing_in: "img_req_enhancer"
-        enhancing_out: "/img_enhanced"
+"SingleScaleRetinex":
+    Node:
+        Name: "SingleScaleRetinex"
+        ColorSpace: "bgr8"
+        In:
+            Topic: "/bluefox_camera/image_raw"
+            Compressed: "No"
+        Out:
+             Topic: "/RRetinex/SingleScale"
+             Compressed: "No"
+             Format: "jpeg"
+    Retinex:
+        Variance: 100
 
-Image:
-    format: "rgb8"
-
-Scheduler:
-    time_msec: 1000
-
-Debugging: "yes"
+"MultiScaleRetinex":
+    Node:
+        Name: "MultiScaleRetinex"
+        ImgFormat: "gbr8"
+        In:
+            Topic: "/bluefox_camera/image_raw/compressed"
+            Compressed: "Yes"
+        Out:
+             Topic: "/RRetinex/MultiScaleRetinex"
+             Compressed: "No"
+             Format: "jpeg"
+    Retinex:
+        Variance: [15, 80, 30]

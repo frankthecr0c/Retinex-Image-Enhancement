@@ -1,10 +1,10 @@
 import rospy
 from sensor_msgs.msg import Image, CompressedImage
 from pathlib import Path
-from Retinex.Scripts.tools import CvBr, CvBrComp, yaml_parser, str2bool
-from Retinex.Scripts.retinex import SingleScaleRetinex
+from Scripts.tools import CvBr, CvBrComp, yaml_parser, str2bool
+from Scripts.retinex import SingleScaleRetinex
 from dynamic_reconfigure.server import Server
-from Retinex.cfg import SSRetinex
+# from cfg import SSRetinex
 
 class SSRRos:
     def __init__(self, options):
@@ -35,7 +35,7 @@ class SSRRos:
         rospy.loginfo("Node {} Ready".format(node_name))
 
          # Set Config
-        srv = Server(SSRetinex, self.conf_callback)
+        #srv = Server(SSRetinex, self.conf_callback)
 
     def _set_subscriber(self, node_options):
         in_opt = node_options["In"]
@@ -76,7 +76,7 @@ class SSRRos:
             cv_image_in = self.bridge_in.ros2cv(img_msg)
             enh_image = (self.SSR.do_ssr(cv_image_in))
             self.publisher.publish(self.bridge_out.cv2ros(enh_image))
-            rospy.loginfo("Published")
+
         except Exception as e:
             msg = "Error while trying to publish the enhanced image: {}".format(e)
             rospy.logerr(msg)
@@ -97,7 +97,7 @@ class SSRRos:
 if __name__ == "__main__":
 
     # Get the ros configs, assuming they are in the config folder which is in the same level of this script
-    script_path = Path.cwd()
+    script_path = Path(__file__).parent
     config_path = Path(script_path.parent, "config", "ros_config.yaml")
     ros_opt = yaml_parser(config_path)
 
