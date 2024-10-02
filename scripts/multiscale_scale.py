@@ -1,5 +1,5 @@
 import rospy
-from Scripts.tools import yaml_parser
+from scripts.tools import yaml_parser
 
 
 def img_callback(self, img_msg):

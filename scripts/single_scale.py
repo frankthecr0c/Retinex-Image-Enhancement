@@ -1,10 +1,10 @@
 import rospy
 from sensor_msgs.msg import Image, CompressedImage
 from pathlib import Path
-from Scripts.tools import CvBr, CvBrComp, yaml_parser, str2bool
-from Scripts.retinex import SingleScaleRetinex
+from scripts.tools import CvBr, CvBrComp, yaml_parser, str2bool
+from scripts.retinex import SingleScaleRetinex
 from dynamic_reconfigure.server import Server
-# from cfg import SSRetinex
+from rretinex.cfg import SSRetinexConfig
 
 class SSRRos:
     def __init__(self, options):
@@ -34,8 +34,8 @@ class SSRRos:
         self.SSR.variance = retinex_settings["Variance"]
         rospy.loginfo("Node {} Ready".format(node_name))
 
-         # Set Config
-        #srv = Server(SSRetinex, self.conf_callback)
+        # Set Config
+        srv = Server(SSRetinexConfig, self.conf_callback)
 
     def _set_subscriber(self, node_options):
         in_opt = node_options["In"]
