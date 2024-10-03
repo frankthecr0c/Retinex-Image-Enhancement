@@ -1,10 +1,13 @@
+#!/usr/bin/env python3
+
 import rospy
 from sensor_msgs.msg import Image, CompressedImage
 from pathlib import Path
-from scripts.tools import CvBr, CvBrComp, yaml_parser, str2bool
-from scripts.retinex import SingleScaleRetinex
-from dynamic_reconfigure.server import Server
+from tools import CvBr, CvBrComp, yaml_parser, str2bool, RosparamServer
+from retinex import SingleScaleRetinex
+from dynamic_reconfigure.client import Client
 from rretinex.cfg import SSRetinexConfig
+
 
 class SSRRos:
     def __init__(self, options):
@@ -12,11 +15,7 @@ class SSRRos:
         # Retrieve options
         node_settings = options["Node"]
         retinex_settings = options["Retinex"]
-
-        # Node definition
-        node_name = node_settings["Name"]
-        rospy.loginfo("Initializing Node: {}".format(node_name))
-        rospy.init_node(node_name, anonymous=False)
+        n_name = node_settings["Name"]
 
         # image color space
         self.color_space = node_settings["ColorSpace"]
@@ -32,10 +31,10 @@ class SSRRos:
         # Initialize SSR object
         self.SSR = SingleScaleRetinex()
         self.SSR.variance = retinex_settings["Variance"]
-        rospy.loginfo("Node {} Ready".format(node_name))
+        rospy.loginfo("Node {} Ready".format(n_name))
 
-        # Set Config
-        srv = Server(SSRetinexConfig, self.conf_callback)
+        # get Config
+        self.client = Client(n_name, timeout=30, config_callback=self._rosparam_callback)
 
     def _set_subscriber(self, node_options):
         in_opt = node_options["In"]
@@ -82,16 +81,8 @@ class SSRRos:
             rospy.logerr(msg)
             print(msg)
 
-    def conf_callback(self, config, level):
-        # Get the string parameter
-        variance = config["variance"]
-        # Split the string using the delimiter '|'
-        try:
-            # Remove the first and last '|' if they exist
-            self.SSR.variance = variance
-        except ValueError:
-            rospy.logwarn("Invalid variance value")
-
+    def _rosparam_callback(self, config):
+        self.SSR.variance = max(1, config["variance"])
 
 
 if __name__ == "__main__":
@@ -104,9 +95,16 @@ if __name__ == "__main__":
     # Get the configurations for the single scale retinex
     settings = ros_opt["SingleScaleRetinex"]
 
+    # Node definition
+    node_name = settings["Node"]["Name"]
+    rospy.loginfo("Initializing Node: {}".format(node_name))
+    rospy.init_node(node_name, anonymous=False)
+
+    # Create Server for rosparam
+    srv = RosparamServer(config_name=SSRetinexConfig)
+
     # Create the Retinex Ros Wrapper
     single_retinex = SSRRos(options=settings)
-
 
     # ROS!
     rospy.spin()

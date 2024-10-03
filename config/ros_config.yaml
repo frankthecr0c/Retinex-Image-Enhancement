@@ -15,10 +15,10 @@
 "MultiScaleRetinex":
     Node:
         Name: "MultiScaleRetinex"
-        ImgFormat: "gbr8"
+        ColorSpace: "bgr8"
         In:
-            Topic: "/bluefox_camera/image_raw/compressed"
-            Compressed: "Yes"
+            Topic: "/bluefox_camera/image_raw/"
+            Compressed: "No"
         Out:
              Topic: "/RRetinex/MultiScaleRetinex"
              Compressed: "No"
