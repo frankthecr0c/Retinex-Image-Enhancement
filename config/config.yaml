@@ -11,6 +11,7 @@
              Format: "jpeg"
     Retinex:
         Variance: 100
+    Alias: "SSR"
 
 "MultiScaleRetinex":
     Node:
@@ -25,3 +26,4 @@
              Format: "jpeg"
     Retinex:
         Variance: [15, 80, 30]
+    Alias: "MSR"

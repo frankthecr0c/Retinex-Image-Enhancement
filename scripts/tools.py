@@ -4,7 +4,42 @@ import argparse
 from abc import ABC, abstractmethod
 from cv_bridge import CvBridge, CvBridgeError
 from dynamic_reconfigure.server import Server
-import rospy
+import os
+from pathlib import Path
+import logging
+import cv2
+
+
+def are_all_images(folder_path):
+    """
+  Checks if all files in a folder are images using OpenCV.
+
+  Args:
+    folder_path: The path to the folder.
+
+  Returns:
+    True if all files in the folder are images, False otherwise.
+  """
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        if os.path.isfile(file_path):
+            try:
+                # Try to read the image using OpenCV
+                img = cv2.imread(file_path)
+                # Check if the image was loaded successfully
+                if img is None:
+                    return False
+            except cv2.error:
+                return False
+    return True
+
+
+def check_folder(folder_path):
+    if not Path(folder_path).exists():
+        raise FileNotFoundError
+    else:
+        return folder_path
+
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -37,7 +72,6 @@ class RosparamServer:
     """
 
     def __init__(self, config_name):
-
         self.srv = Server(config_name, self._srv_callback)
 
     def _srv_callback(self, config, level):
@@ -119,3 +153,25 @@ class CvBrComp(RosBr):
         except CvBridgeError as e:
             msg = "Error while trying to convert ROS image to OpenCV: {}".format(e)
             print(msg)
+
+
+class FolderCreator:
+    def __init__(self, path, log_ref: logging = None):
+        self.path = os.path.abspath(path)
+        try:
+            os.makedirs(self.path, exist_ok=False)
+            msg_log = ''.join(["Folder {} created".format(self.path)])
+            if log_ref:
+                log_ref.debug(msg_log)
+            else:
+                print(msg_log)
+        except Exception as e:
+            msg_log = ''.join(["Error while creating the folder: ", str(self.path), "\n", str(e)])
+            if log_ref:
+                log_ref.error(msg_log)
+            else:
+                print(msg_log)
+            sys.exit(1)
+
+    def get_path(self):
+        return self.path

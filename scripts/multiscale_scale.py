@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     # Get the ros configs, assuming they are in the config folder which is in the same level of this script
     script_path = Path(__file__).parent
-    config_path = Path(script_path.parent, "config", "ros_config.yaml")
+    config_path = Path(script_path.parent, "config", "config.yaml")
     ros_opt = yaml_parser(config_path)
 
     # Get the configurations for the single scale retinex
