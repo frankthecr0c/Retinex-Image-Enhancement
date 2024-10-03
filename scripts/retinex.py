@@ -15,7 +15,7 @@ class SingleScaleRetinex:
     def variance(self, value):
         self._variance = value
 
-    def ss_retinex(self, img_in):
+    def ss_retinex(self, img):
         if self._variance:
             img = img+1e-7
             retinex = np.log10(img) - np.log10(cv2.GaussianBlur(img, (0, 0), self._variance))
