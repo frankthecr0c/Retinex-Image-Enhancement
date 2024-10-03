@@ -30,7 +30,7 @@ class MSRRos:
 
         # Initialize MSR object
         self.MSR = MultiScaleRetinex()
-        self.MSR.variances = retinex_settings["Variance"]
+        self.MSR.variance = retinex_settings["Variance"]
         rospy.loginfo("Node {} Ready".format(n_name))
 
         # get Config
@@ -73,7 +73,7 @@ class MSRRos:
     def img_callback(self, img_msg):
         try:
             cv_image_in = self.bridge_in.ros2cv(img_msg)
-            enh_image = (self.MSR.do_msr(cv_image_in))
+            enh_image = self.MSR.do_msr(cv_image_in)
             self.publisher.publish(self.bridge_out.cv2ros(enh_image))
 
         except Exception as e:
@@ -85,6 +85,7 @@ class MSRRos:
         variance_string = str(config["variance_list"])
         variance_list = variance_string.split("|")
         if len(variance_list) > 0:
+            variance_list = [int(x) for x in variance_list]
             self.MSR.variance = variance_list
             print("MSR: New variance list: {}".format(variance_list))
         else:
