@@ -73,7 +73,7 @@ class MSRRos:
     def img_callback(self, img_msg):
         try:
             cv_image_in = self.bridge_in.ros2cv(img_msg)
-            enh_image = self.MSR.do_msr(cv_image_in)
+            enh_image = self.MSR.do(cv_image_in)
             self.publisher.publish(self.bridge_out.cv2ros(enh_image))
 
         except Exception as e:

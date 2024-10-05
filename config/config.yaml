@@ -25,5 +25,5 @@
              Compressed: "No"
              Format: "jpeg"
     Retinex:
-        Variance: [15, 80, 30]
+        Variance: [200, 20, 30]
     Alias: "MSR"

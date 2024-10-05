@@ -21,10 +21,10 @@ class SingleScaleRetinex:
             retinex = np.log10(img) - np.log10(cv2.GaussianBlur(img, (0, 0), self._variance))
             return retinex
         else:
-            print("Error on ss_retinex: the variance must be set.")
+            print("SSR Error on ss_retinex method: the variance must be set.")
             return None
 
-    def do_ssr(self, img):
+    def do(self, img):
         if self._variance:
             img = np.float64(img) + 1.0
             img_retinex = self.ss_retinex(img)
@@ -50,7 +50,7 @@ class SingleScaleRetinex:
             img_retinex = np.uint8(img_retinex)
             return img_retinex
         else:
-            print("Error on do_ssr: the variance must be set.")
+            print("SSR Error on do method: the variance must be set.")
             return None
 
 
@@ -77,10 +77,10 @@ class MultiScaleRetinex:
             retinex = retinex / len(self._variance)
             return retinex
         else:
-            print("Error on ms_retinex: the variance list must be set.")
+            print("MSR Error on ms_retinex method: the variance list must be set.")
             return None
 
-    def do_msr(self, img):
+    def do(self, img):
         if self._variance:
             img = np.float64(img) + 1.0
             img_retinex = self.ms_retinex(img)
@@ -106,8 +106,9 @@ class MultiScaleRetinex:
             img_retinex = np.uint8(img_retinex)
             return img_retinex
         else:
-            print("Error on do_msr: the variance list must be set.")
+            print("MSR Error on do method: the variance list must be set.")
             return None
+
 
 if __name__ == "__main__":
 
@@ -121,8 +122,8 @@ if __name__ == "__main__":
     MSR = MultiScaleRetinex()
     MSR.variances = variance_list
 
-    img_ssr = SSR.do_ssr(img)
-    img_msr = MSR.do_msr(img)
+    img_ssr = SSR.do(img)
+    img_msr = MSR.do(img)
 
     cv2.imshow('Original', img)
     cv2.imshow('MSR', img_msr)
