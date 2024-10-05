@@ -62,6 +62,28 @@ def yaml_parser(yaml_path):
             sys.exit(1)
     return config_loaded
 
+class TxtWriter:
+
+    def __init__(self, directory, filename):
+        # check if the filename has alredy the .txt extension
+        if len(filename.split(sep=".txt")) > 1:
+            print("WARNING: the filename provided already contains .txt extension.")
+            self.path = os.path.join(directory, filename)
+        else:
+            self.path = os.path.join(directory, ''.join([filename, ".txt"]))
+        self.path = os.path.abspath(self.path)
+
+    def append_row(self, row):
+        try:
+            with open(self.path, 'a') as f:
+                f.write(row + "\n")
+                f.close()
+        except Exception as e:
+            msg = ''.join(["Error while writing on the file: ", str(self.path), "\n", str(e)])
+            print(msg)
+            sys.exit(1)
+
+
 
 class RosparamServer:
     """
