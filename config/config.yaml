@@ -10,7 +10,7 @@
              Compressed: "No"
              Format: "jpeg"
     Retinex:
-        Variance: 1
+        Variance: 150
     Alias: "SSR"
 
 "MultiScaleRetinex":
